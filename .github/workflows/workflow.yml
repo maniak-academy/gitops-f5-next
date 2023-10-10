@@ -25,6 +25,24 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
+      - name: Send POST request and get token
+        run: |
+        # Make POST request
+        RESPONSE=$(curl -s -X POST "https://${{ secrets.F5_ADDRESS }}/api/login" -H "Content-Type: application/json" -d '{"username":"${{ secrets.F5_LOGIN }}", "password":"${{ secrets.F5_PASSWORD }}"}')
+        
+        # Extract token from the response
+        TOKEN=$(echo $RESPONSE | jq -r '.token')
+      
+        #Set the token as an environment variable for subsequent steps
+        echo "TOKEN=$TOKEN" >> $GITHUB_ENV
+
+
+      - name: Use the token
+        run: |
+          # Just an example of using the token
+          curl -s -H "Authorization: Bearer $TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/instances"
+
+        
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
