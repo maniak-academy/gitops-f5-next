@@ -26,7 +26,6 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Send POST request and get token
-        working-directory: ./apps
         run: |
           RESPONSE=$(curl -s -k -X POST "https://${{ secrets.F5_ADDRESS }}/api/login" -H "Content-Type: application/json" -d '{"username":"${{ secrets.F5_LOGIN }}", "password":"${{ secrets.F5_PASSWORD }}"}')
 
@@ -37,16 +36,22 @@ jobs:
           echo "REFRESH_TOKEN=$REFRESH_TOKEN" >> $GITHUB_ENV
 
       - name: Use the tokens in subsequent steps
-        working-directory: ./apps
         run: |
           echo "Access Token: $ACCESS_TOKEN"
           echo "Refresh Token: $REFRESH_TOKEN"
           
 
       - name: Use the token
-        working-directory: ./apps
         run: |
           # Just an example of using the token
           curl -s -k -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/instances"
 
 
+      - name: Create an App Document
+        run: |
+          # Just an example of using the token
+          RESPONSE=$(curl -s -k -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/appsvcs/documents" -H "Content-Type: application/json" -d '{ "class": "AS3", "action": "deploy", "persist": true, "declaration": { "class": "ADC", "schemaVersion": "3.0.0", "id": "urn:uuid:33045210-3ab8-4636-9b2a-c98d22ab915d", "label": "Sample 1", "remark": "Simple HTTP Service with Round-Robin Load Balancing", "Sample_01": { "class": "Tenant", "A1": { "class": "Application", "service": { "class": "Service_HTTP", "virtualAddresses": [ "10.0.1.10" ], "pool": "web_pool" }, "web_pool": { "class": "Pool", "monitors": [ "http" ], "members": [ { "servicePort": 80, "serverAddresses": [ "192.0.1.10", "192.0.1.11" ] } ] } } } }}'')
+
+          DocumentID=$(echo $RESPONSE | jq -r '.id')
+
+          echo "DocumentID=$DocumentID" >> $GITHUB_ENV
