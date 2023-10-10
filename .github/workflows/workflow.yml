@@ -31,10 +31,15 @@ jobs:
 
           ACCESS_TOKEN=$(echo $RESPONSE | jq -r '.access_token')
           REFRESH_TOKEN=$(echo $RESPONSE | jq -r '.refresh_token')
-          
+
           echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
           echo "REFRESH_TOKEN=$REFRESH_TOKEN" >> $GITHUB_ENV
-
+          
+      - name: Use the tokens in subsequent steps
+        run: |
+          echo "Access Token: $ACCESS_TOKEN"
+          echo "Refresh Token: $REFRESH_TOKEN"
+          
         # RESPONSE=$(curl -s -X POST "https://${{ secrets.F5_ADDRESS }}/api/login" -H "Content-Type: application/json" -d '{"username":"${{ secrets.F5_LOGIN }}", "password":"${{ secrets.F5_PASSWORD }}"}')
         
         # # Extract token from the response
