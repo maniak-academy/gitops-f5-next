@@ -27,14 +27,16 @@ jobs:
 
       - name: Send POST request and get token
         run: |
-        # Make POST request
-        RESPONSE=$(curl -s -X POST "https://${{ secrets.F5_ADDRESS }}/api/login" -H "Content-Type: application/json" -d '{"username":"${{ secrets.F5_LOGIN }}", "password":"${{ secrets.F5_PASSWORD }}"}')
+          curl -X POST "https://${{ secrets.F5_ADDRESS }}/api/login" -H "Content-Type: application/json" -d '{"username":"${{ secrets.F5_LOGIN }}", "password":"${{ secrets.F5_PASSWORD }}"}'
+
+
+        # RESPONSE=$(curl -s -X POST "https://${{ secrets.F5_ADDRESS }}/api/login" -H "Content-Type: application/json" -d '{"username":"${{ secrets.F5_LOGIN }}", "password":"${{ secrets.F5_PASSWORD }}"}')
         
-        # Extract token from the response
-        TOKEN=$(echo $RESPONSE | jq -r '.token')
+        # # Extract token from the response
+        #TOKEN=$(echo $RESPONSE | jq -r '.token')
       
-        #Set the token as an environment variable for subsequent steps
-        echo "TOKEN=$TOKEN" >> $GITHUB_ENV
+        # #Set the token as an environment variable for subsequent steps
+       # echo "TOKEN=$TOKEN" >> $GITHUB_ENV
 
 
       - name: Use the token
