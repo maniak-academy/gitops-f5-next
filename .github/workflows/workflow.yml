@@ -26,6 +26,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Send POST request and get token
+        working-directory: ./apps
         run: |
           RESPONSE=$(curl -s -k -X POST "https://${{ secrets.F5_ADDRESS }}/api/login" -H "Content-Type: application/json" -d '{"username":"${{ secrets.F5_LOGIN }}", "password":"${{ secrets.F5_PASSWORD }}"}')
 
@@ -36,23 +37,16 @@ jobs:
           echo "REFRESH_TOKEN=$REFRESH_TOKEN" >> $GITHUB_ENV
 
       - name: Use the tokens in subsequent steps
+        working-directory: ./apps
         run: |
           echo "Access Token: $ACCESS_TOKEN"
           echo "Refresh Token: $REFRESH_TOKEN"
           
 
       - name: Use the token
+        working-directory: ./apps
         run: |
           # Just an example of using the token
           curl -s -k -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/instances"
 
-        
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
