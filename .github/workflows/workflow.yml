@@ -1,29 +1,37 @@
+# This is a basic workflow to help you get started with Actions
+
 name: CI
 
+# Controls when the workflow will run
 on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  # This workflow contains a single job called "build"
   build:
+    # The type of runner that the job will run on
     runs-on: self-hosted
 
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - uses: actions/checkout@v2  # Use v2 for now
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
 
       - name: Send POST request and get token
         run: |
           RESPONSE=$(curl -s -k -X POST "https://${{ secrets.F5_ADDRESS }}/api/login" -H "Content-Type: application/json" -d '{"username":"${{ secrets.F5_LOGIN }}", "password":"${{ secrets.F5_PASSWORD }}"}')
+
           ACCESS_TOKEN=$(echo $RESPONSE | jq -r '.access_token')
           REFRESH_TOKEN=$(echo $RESPONSE | jq -r '.refresh_token')
+
           echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
           echo "REFRESH_TOKEN=$REFRESH_TOKEN" >> $GITHUB_ENV
 
@@ -31,16 +39,24 @@ jobs:
         run: |
           echo "Access Token: $ACCESS_TOKEN"
           echo "Refresh Token: $REFRESH_TOKEN"
+          
 
       - name: Use the token
         run: |
+          # Just an example of using the token
           curl -s -k -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/instances"
+
 
       - name: Create App Documents from Payloads in Apps Folder
         run: |
+          # Loop through files in the apps directory and send them
           for file in apps/*.json; do
             RESPONSE=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/appsvcs/documents" -H "Content-Type: application/json" -d @$file)
+
             DOCUMENTID=$(echo $RESPONSE | jq -r '.id')
-            curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/appsvcs/documents/$DOCUMENTID/deployments" -H "Content-Type: application/json" -d '{"target": "172.16.10.100"}'  # Fixed the curl command
+
+            curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/appsvcs/documents/$DOCUMENTID/deployments" -H "Content-Type: application/json" -d '{"target": "172.16.10.100"}
+
             echo "DOCUMENTID for $file = $DOCUMENTID"
           done
+            
