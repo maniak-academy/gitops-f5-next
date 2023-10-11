@@ -62,7 +62,7 @@ jobs:
             
       - name: Send GET request App Document
         run: |
-          curl -s -k -X GET -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/appsvcs/documents/{{$DOCUMENTID}}"
+          curl -s -k -X GET -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/appsvcs/documents/$DOCUMENTID"
           
       - name: Create requested App Document and assign it to F5 Next Instance
         run: |
