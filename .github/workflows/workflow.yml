@@ -47,10 +47,11 @@ jobs:
           curl -s -k -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/instances"
 
 
-      - name: Create an App Document
+      - name: Create App Documents from Payloads in Apps Folder
         run: |
-          # Just an example of using the token
-          RESPONSE=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/appsvcs/documents" -H "Content-Type: application/json" -d '{ "class": "ADC", "schemaVersion": "3.12.0", "DemoTenant": { "class": "Tenant", "TestApp": { "class": "Application", "template": "http", "serviceMain": { "pool": "Pool", "snat": "auto", "virtualPort": 80, "virtualAddresses": [ "5.6.7.8" ], "class": "Service_HTTP" }, "Pool": { "members": [ { "servicePort": 80, "serverAddresses": [ "5.6.7.8" ] } ], "loadBalancingMode": "round-robin", "class": "Pool" } } } }')
+          # Loop through files in the apps directory and send them
+          for file in apps/*.json; do
+          RESPONSE=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/appsvcs/documents" -H "Content-Type: application/json" -d @$file)
 
           DOCUMENTID=$(echo $RESPONSE | jq -r '.id')
 
