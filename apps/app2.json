@@ -1,22 +1,22 @@
 {
   "class": "ADC",
   "schemaVersion": "3.0.0",
-  "Backend": {
+  "WebApp2": {
     "class": "Tenant",
-    "Backend": {
+    "WebApp2": {
       "class": "Application",
       "template": "http",
       "serviceMain": {
-        "pool": "Backend-Pool",
+        "pool": "WebApp2-Pool",
         "snat": "auto",
         "virtualPort": 80,
-        "virtualAddresses": ["172.16.40.81"],
+        "virtualAddresses": ["172.16.40.82"],
         "class": "Service_HTTP"
       },
-      "Backend-Pool": {
+      "WebApp2-Pool": {
         "members": [{
           "servicePort": 80,
-          "serverAddresses": ["172.16.40.22","172.16.40.30"]
+          "serverAddresses": ["172.16.40.25","172.16.40.16"]
         }],
         "loadBalancingMode": "round-robin",
         "class": "Pool"
