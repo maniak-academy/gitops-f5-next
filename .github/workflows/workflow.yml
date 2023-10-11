@@ -55,12 +55,8 @@ jobs:
 
             DOCUMENTID=$(echo $RESPONSE | jq -r '.id')
 
-            echo "DOCUMENTID=$DOCUMENTID" >> $GITHUB_ENV
+            echo "DOCUMENTID for $file = $DOCUMENTID"
           done
-
-      - name: Use the DOCUMENTID in subsequent steps
-        run: |
-          echo "DOCUMENT ID: $DOCUMENTID"
             
       - name: Send GET request App Document
         run: |
