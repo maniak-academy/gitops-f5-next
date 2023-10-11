@@ -1,7 +1,7 @@
 {
     "class": "ADC",
     "schemaVersion": "3.12.0",
-    "WebApp1": {
+    "webfront": {
       "class": "Tenant",
       "WebApp1": {
         "class": "Application",
@@ -20,7 +20,7 @@
             "serverAddresses": ["172.16.40.20","172.16.40.21"]
           }],
           "loadBalancingMode": "round-robin",
-          "class": "WebApp1-Pool"
+          "class": "Pool"
         }
       }
     }

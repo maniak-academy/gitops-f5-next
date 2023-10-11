@@ -3,7 +3,7 @@
   "schemaVersion": "3.12.0",
   "WebApp2": {
     "class": "Tenant",
-    "WebApp2": {
+    "webfront": {
       "class": "Application",
       "template": "http",
       "serviceMain": {
@@ -20,7 +20,7 @@
           "serverAddresses": ["172.16.40.22","172.16.40.30"]
         }],
         "loadBalancingMode": "round-robin",
-        "class": "WebApp2-Pool"
+        "class": "Pool"
       }
     }
   }
