@@ -50,7 +50,7 @@ jobs:
       - name: Create an App Document
         run: |
           # Just an example of using the token
-          RESPONSE=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/appsvcs/documents" -H "Content-Type: application/json" -d           '{ "class": "ADC", "schemaVersion": "3.12.0", "DemoTenant": { "class": "Tenant", "TestApp": { "class": "Application", "template": "http", "serviceMain": { "pool": "Pool", "snat": "auto", "virtualPort": 80, "virtualAddresses": [ "5.6.7.8" ], "class": "Service_HTTP" }, "Pool": { "members": [ { "servicePort": 80, "serverAddresses": [ "5.6.7.8" ] } ], "loadBalancingMode": "round-robin", "class": "Pool" } } } }')
+          RESPONSE=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/appsvcs/documents" -H "Content-Type: application/json" -d '{ "class": "ADC", "schemaVersion": "3.12.0", "DemoTenant": { "class": "Tenant", "TestApp": { "class": "Application", "template": "http", "serviceMain": { "pool": "Pool", "snat": "auto", "virtualPort": 80, "virtualAddresses": [ "5.6.7.8" ], "class": "Service_HTTP" }, "Pool": { "members": [ { "servicePort": 80, "serverAddresses": [ "5.6.7.8" ] } ], "loadBalancingMode": "round-robin", "class": "Pool" } } } }')
 
           DOCUMENTID=$(echo $RESPONSE | jq -r '.id')
 
@@ -60,6 +60,11 @@ jobs:
         run: |
           echo "DOCUMENT ID: $DOCUMENTID"
             
-      # - name: Send GET request and get token
-      #   run: |
-      #     RESPONSE=$(curl -s -k -X POST "https://${{ secrets.F5_ADDRESS }}/api/login" -H "Content-Type: application/json" -d '{"username":"${{ secrets.F5_LOGIN }}", "password":"${{ secrets.F5_PASSWORD }}"}')
+      - name: Send GET request App Document
+        run: |
+          curl -s -k -X GET -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/appsvcs/documents/{{$DOCUMENTID}}"
+          
+      - name: Create requested App Document and assign it to F5 Next Instance
+        run: |
+          curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/appsvcs/documents/{{$DOCUMENTID}}/deployments" -H "Content-Type: application/json" -d '{"target": "172.16.10.100"}'
+
