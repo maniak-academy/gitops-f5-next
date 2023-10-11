@@ -51,11 +51,12 @@ jobs:
         run: |
           # Loop through files in the apps directory and send them
           for file in apps/*.json; do
-          RESPONSE=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/appsvcs/documents" -H "Content-Type: application/json" -d @$file)
+            RESPONSE=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/appsvcs/documents" -H "Content-Type: application/json" -d @$file)
 
-          DOCUMENTID=$(echo $RESPONSE | jq -r '.id')
+            DOCUMENTID=$(echo $RESPONSE | jq -r '.id')
 
-          echo "DOCUMENTID=$DOCUMENTID" >> $GITHUB_ENV
+            echo "DOCUMENTID=$DOCUMENTID" >> $GITHUB_ENV
+          done
 
       - name: Use the DOCUMENTID in subsequent steps
         run: |
