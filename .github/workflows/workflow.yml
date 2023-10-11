@@ -50,7 +50,7 @@ jobs:
       - name: Create an App Document
         run: |
           # Just an example of using the token
-          RESPONSE=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/appsvcs/documents" -H "Content-Type: application/json" -d '{ "class": "AS3", "action": "deploy", "persist": true, "declaration": { "class": "ADC", "schemaVersion": "3.0.0", "id": "urn:uuid:33045210-3ab8-4636-9b2a-c98d22ab915d", "label": "Sample 1", "remark": "Simple HTTP Service with Round-Robin Load Balancing", "Sample_01": { "class": "Tenant", "A1": { "class": "Application", "service": { "class": "Service_HTTP", "virtualAddresses": [ "10.0.1.10" ], "pool": "web_pool" }, "web_pool": { "class": "Pool", "monitors": [ "http" ], "members": [ { "servicePort": 80, "serverAddresses": [ "192.0.1.10", "192.0.1.11" ] } ] } } } }}')
+          RESPONSE=$(curl -s -k -X POST -H "Authorization: Bearer $ACCESS_TOKEN" "https://${{ secrets.F5_ADDRESS }}/api/v1/spaces/default/appsvcs/documents" -H "Content-Type: application/json" -d           '{ "class": "ADC", "schemaVersion": "3.12.0", "DemoTenant": { "class": "Tenant", "TestApp": { "class": "Application", "template": "http", "serviceMain": { "pool": "Pool", "snat": "auto", "virtualPort": 80, "virtualAddresses": [ "5.6.7.8" ], "class": "Service_HTTP" }, "Pool": { "members": [ { "servicePort": 80, "serverAddresses": [ "5.6.7.8" ] } ], "loadBalancingMode": "round-robin", "class": "Pool" } } } }')
 
           DocumentID=$(echo $RESPONSE | jq -r '.id')
 
