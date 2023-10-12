@@ -1,19 +1,19 @@
 {
     "class": "ADC",
     "schemaVersion": "3.0.0",
-    "WebApp3": {
+    "WebApp4": {
       "class": "Tenant",
-      "WebApp3": {
+      "WebApp4": {
         "class": "Application",
         "template": "http",
         "serviceMain": {
-          "pool": "WebApp3-Pool",
+          "pool": "WebApp4-Pool",
           "snat": "auto",
           "virtualPort": 80,
           "virtualAddresses": ["172.16.40.17"],
           "class": "Service_HTTP"
         },
-        "WebApp3-Pool": {
+        "WebApp4-Pool": {
           "members": [{
             "servicePort": 80,
             "shareNodes": true,
