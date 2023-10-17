@@ -14,7 +14,9 @@
           "class": "Service_HTTP"
         },
         "JuiceShop-Pool": {
-          "monitor": "tcp",
+          "monitors": [
+            "tcp"
+          ],
           "members": [{
             "servicePort": 3000,
             "serverAddresses": ["172.16.40.128"]
